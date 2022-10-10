@@ -3,13 +3,13 @@ pragma solidity ^0.8.0;
 
 import {Script} from 'forge-std/Script.sol';
 import {AaveV2Ethereum, AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom} from 'aave-address-book/AaveAddressBook.sol';
-import {AaveParaswapCollector} from '../src/contracts/AaveParaswapCollector.sol';
+import {AaveParaswapFeeClaimer} from '../src/contracts/AaveParaswapFeeClaimer.sol';
 import {ParaswapClaimer} from '../src/lib/ParaswapClaimer.sol';
 
 contract DeployEthereum is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapCollector(
+    new AaveParaswapFeeClaimer(
       AaveV2Ethereum.COLLECTOR,
       ParaswapClaimer.ETHEREUM
     );
@@ -20,7 +20,10 @@ contract DeployEthereum is Script {
 contract DeployPolygon is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapCollector(AaveV3Polygon.COLLECTOR, ParaswapClaimer.POLYGON);
+    new AaveParaswapFeeClaimer(
+      AaveV3Polygon.COLLECTOR,
+      ParaswapClaimer.POLYGON
+    );
     vm.stopBroadcast();
   }
 }
@@ -28,7 +31,7 @@ contract DeployPolygon is Script {
 contract DeployAvalanche is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapCollector(
+    new AaveParaswapFeeClaimer(
       AaveV3Avalanche.COLLECTOR,
       ParaswapClaimer.AVALANCHE
     );
@@ -39,7 +42,7 @@ contract DeployAvalanche is Script {
 contract DeployOptimism is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapCollector(
+    new AaveParaswapFeeClaimer(
       AaveV3Optimism.COLLECTOR,
       ParaswapClaimer.OPTIMISM
     );
@@ -50,7 +53,7 @@ contract DeployOptimism is Script {
 contract DeployArbitrum is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapCollector(
+    new AaveParaswapFeeClaimer(
       AaveV3Arbitrum.COLLECTOR,
       ParaswapClaimer.ARBITRUM
     );
@@ -61,7 +64,7 @@ contract DeployArbitrum is Script {
 contract DeployFantom is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapCollector(AaveV3Fantom.COLLECTOR, ParaswapClaimer.FANTOM);
+    new AaveParaswapFeeClaimer(AaveV3Fantom.COLLECTOR, ParaswapClaimer.FANTOM);
     vm.stopBroadcast();
   }
 }

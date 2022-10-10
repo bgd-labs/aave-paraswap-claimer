@@ -6,11 +6,11 @@ import {IFeeClaimer} from '../interfaces/IFeeClaimer.sol';
 import {IERC20} from '../interfaces/IERC20.sol';
 
 /**
- * @title AaveParaswapCollector
+ * @title AaveParaswapFeeClaimer
  * @author BGD Labs
  * @dev Helper contract that allows claiming paraswap partner fee to the collector on the respective network.
  */
-contract AaveParaswapCollector {
+contract AaveParaswapFeeClaimer {
   address public immutable COLLECTOR;
   IFeeClaimer public immutable PARASWAP_FEE_CLAIMER;
 

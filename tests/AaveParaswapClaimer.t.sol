@@ -3,13 +3,13 @@ pragma solidity ^0.8.0;
 
 import 'forge-std/Test.sol';
 import {AaveV3Polygon} from 'aave-address-book/AaveV3Polygon.sol';
-import {AaveParaswapCollector} from '../src/contracts/AaveParaswapCollector.sol';
+import {AaveParaswapFeeClaimer} from '../src/contracts/AaveParaswapFeeClaimer.sol';
 import {ParaswapClaimer} from '../src/lib/ParaswapClaimer.sol';
 import {IFeeClaimer} from '../src/interfaces/IFeeClaimer.sol';
 import {IERC20} from '../src/interfaces/IERC20.sol';
 
-contract AaveParaswapCollectorTest is Test {
-  AaveParaswapCollector public aaveParaswapCollector;
+contract AaveParaswapClaimerTest is Test {
+  AaveParaswapFeeClaimer public aaveParaswapClaimer;
 
   address internal constant AUGUSTUS =
     0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57;
@@ -20,16 +20,16 @@ contract AaveParaswapCollectorTest is Test {
 
   function setUp() public {
     vm.createSelectFork(vm.rpcUrl('polygon'), 31507646);
-    aaveParaswapCollector = new AaveParaswapCollector(
+    aaveParaswapClaimer = new AaveParaswapFeeClaimer(
       AaveV3Polygon.COLLECTOR,
       ParaswapClaimer.POLYGON
     );
 
     // mock received fee for
     vm.startPrank(AUGUSTUS);
-    deal(USDC, address(aaveParaswapCollector.PARASWAP_FEE_CLAIMER()), 2 ether);
-    IFeeClaimer(aaveParaswapCollector.PARASWAP_FEE_CLAIMER()).registerFee(
-      address(aaveParaswapCollector),
+    deal(USDC, address(aaveParaswapClaimer.PARASWAP_FEE_CLAIMER()), 2 ether);
+    IFeeClaimer(aaveParaswapClaimer.PARASWAP_FEE_CLAIMER()).registerFee(
+      address(aaveParaswapClaimer),
       IERC20(USDC),
       1 ether
     );
@@ -37,8 +37,8 @@ contract AaveParaswapCollectorTest is Test {
   }
 
   function test_getClaimable() public {
-    uint256 claimableUSDC = aaveParaswapCollector.getClaimable(USDC);
-    uint256 claimableDAI = aaveParaswapCollector.getClaimable(DAI);
+    uint256 claimableUSDC = aaveParaswapClaimer.getClaimable(USDC);
+    uint256 claimableDAI = aaveParaswapClaimer.getClaimable(DAI);
     assertEq(claimableUSDC, 1 ether);
     assertEq(claimableDAI, 0);
   }
@@ -47,16 +47,16 @@ contract AaveParaswapCollectorTest is Test {
     address[] memory assets = new address[](2);
     assets[0] = USDC;
     assets[1] = DAI;
-    uint256[] memory amounts = aaveParaswapCollector.batchGetClaimable(assets);
+    uint256[] memory amounts = aaveParaswapClaimer.batchGetClaimable(assets);
     assertEq(amounts[0], 1 ether);
     assertEq(amounts[1], 0);
   }
 
   function test_claimToCollector() public {
     uint256 balanceBefore = IERC20(USDC).balanceOf(AaveV3Polygon.COLLECTOR);
-    uint256 claimableUSDC = aaveParaswapCollector.getClaimable(USDC);
+    uint256 claimableUSDC = aaveParaswapClaimer.getClaimable(USDC);
     assertGt(claimableUSDC, 0);
-    aaveParaswapCollector.claimToCollector(IERC20(USDC));
+    aaveParaswapClaimer.claimToCollector(IERC20(USDC));
     assertEq(
       IERC20(USDC).balanceOf(AaveV3Polygon.COLLECTOR),
       balanceBefore + claimableUSDC
@@ -65,11 +65,11 @@ contract AaveParaswapCollectorTest is Test {
 
   function test_batchClaimToCollector() public {
     uint256 balanceBefore = IERC20(USDC).balanceOf(AaveV3Polygon.COLLECTOR);
-    uint256 claimableUSDC = aaveParaswapCollector.getClaimable(USDC);
+    uint256 claimableUSDC = aaveParaswapClaimer.getClaimable(USDC);
     assertGt(claimableUSDC, 0);
     address[] memory assets = new address[](1);
     assets[0] = USDC;
-    aaveParaswapCollector.batchClaimToCollector(assets);
+    aaveParaswapClaimer.batchClaimToCollector(assets);
     assertEq(
       IERC20(USDC).balanceOf(AaveV3Polygon.COLLECTOR),
       balanceBefore + claimableUSDC

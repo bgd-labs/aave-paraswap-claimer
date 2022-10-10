@@ -8,7 +8,7 @@ The contract on this repository aims to simplify the claiming process, by allowi
 ## How it works
 
 Whenever a action involving ParaSwap is performed on the UI, the referrer is set to `aave` which results in positive slippage being accrued on the [paraswap claimer](https://doc.paraswap.network/psp-token/protocol-fees#fee-claimer).
-The `AaveParaswapCollector` is the beneficiary of these accrued rewards & exposes a public function `claimToCollector(address asset)` which will claim the rewards directly from `ParaswapClaimer` to `Collector`.
+The `AaveParaswapFeeClaimer` is the beneficiary of these accrued rewards & exposes a public function `claimToCollector(address asset)` which will claim the rewards directly from `ParaswapClaimer` to `Collector`.
 
 ### Methods
 

@@ -9,12 +9,12 @@ import {IERC20} from '../interfaces/IERC20.sol';
  * Helper contract that allows claiming paraswap partner fee to the collector on the respective network.
  */
 contract AaveParaswapCollector {
-  address public immutable collector;
-  IFeeClaimer public immutable paraswapFeeClaimer;
+  address public immutable COLLECTOR;
+  IFeeClaimer public immutable PARASWAP_FEE_CLAIMER;
 
   constructor(address _collector, address _paraswapFeeClaimer) {
-    collector = _collector;
-    paraswapFeeClaimer = IFeeClaimer(_paraswapFeeClaimer);
+    COLLECTOR = _collector;
+    PARASWAP_FEE_CLAIMER = IFeeClaimer(_paraswapFeeClaimer);
   }
 
   /**
@@ -22,7 +22,7 @@ contract AaveParaswapCollector {
    * @param asset The asset to fetch claimable balance of
    */
   function getClaimable(address asset) public view returns (uint256) {
-    return paraswapFeeClaimer.getBalance(IERC20(asset), address(this));
+    return PARASWAP_FEE_CLAIMER.getBalance(IERC20(asset), address(this));
   }
 
   /**
@@ -34,7 +34,7 @@ contract AaveParaswapCollector {
     view
     returns (uint256[] memory)
   {
-    return paraswapFeeClaimer.batchGetBalance(assets, address(this));
+    return PARASWAP_FEE_CLAIMER.batchGetBalance(assets, address(this));
   }
 
   /**
@@ -43,7 +43,7 @@ contract AaveParaswapCollector {
    * @param asset The asset to claim rewards of
    */
   function claimToCollector(IERC20 asset) external {
-    paraswapFeeClaimer.withdrawAllERC20(asset, collector);
+    PARASWAP_FEE_CLAIMER.withdrawAllERC20(asset, COLLECTOR);
   }
 
   /**
@@ -52,6 +52,6 @@ contract AaveParaswapCollector {
    * @param assets The assets to claim rewards of
    */
   function batchClaimToCollector(address[] memory assets) external {
-    paraswapFeeClaimer.batchWithdrawAllERC20(assets, collector);
+    PARASWAP_FEE_CLAIMER.batchWithdrawAllERC20(assets, COLLECTOR);
   }
 }

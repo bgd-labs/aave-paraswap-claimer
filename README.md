@@ -1,14 +1,13 @@
-# AAVE paraswap collector
+# Aave <> ParaSwap. Fee claimer
 
-Paraswap rewards part of positive slippage to the referrer which in case of swaps performed trough the decentralized ipfs aave interface is the aave protocol itself.
-Currently these rewards can be claimed trough aave governance & respective network guardians.
-This is suboptimal as claiming has to go trough full governance process although it'#s irrational that there's any objection.
+ParaSwap rewards part of the positive slippage to the a referrer. In the case of Aave, where ParaSwap is used on the Aave IPFS interface to swap funds on features like collateral swap or repayment with collateral, the referrer is the Collector of the protocol itself.
+Currently the Aave protocol can claim referrer fees via Aave Governance and/or respective network Guardians. But this is not really optimal as, once setup, the the claim procedure can be executed in a permissionless way.
 
-The contract presented here aims to simplify this process by allow anyone to claim to the respective aave collector.
+The contract on this repository aims to simplify the claiming process, by allowing anyone to claim to the respective Aave collector on the network.
 
 ## How it works
 
-Whenever a action involving paraswap is performed on the ui, the referrer is set to `aave` which results in positive slippage being accrued on the [paraswap claimer](https://doc.paraswap.network/psp-token/protocol-fees#fee-claimer).
+Whenever a action involving ParaSwap is performed on the UI, the referrer is set to `aave` which results in positive slippage being accrued on the [paraswap claimer](https://doc.paraswap.network/psp-token/protocol-fees#fee-claimer).
 The `AaveParaswapCollector` is the beneficiary of these accrued rewards & exposes a public function `claimToCollector(address asset)` which will claim the rewards directly from `ParaswapClaimer` to `Collector`.
 
 ### Methods

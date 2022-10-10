@@ -20,8 +20,12 @@ contract AaveParaswapCollector {
   /**
    * @dev returns claimable balances for specified assets
    */
-  function getClaimable(address[] memory assets) public view {
-    PARASWAP_FEE_CLAIMER.batchGetBalance(assets, address(this));
+  function getClaimable(address[] memory assets)
+    public
+    view
+    returns (uint256[] memory)
+  {
+    return PARASWAP_FEE_CLAIMER.batchGetBalance(assets, address(this));
   }
 
   /**

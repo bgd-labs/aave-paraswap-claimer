@@ -22,7 +22,7 @@ contract AaveParaswapCollectorTest is Test {
   function test_getClaimable() public {
     address[] memory assets = new address[](1);
     assets[0] = DAI;
-    uint256[] memory amounts = aaveParaswapCollector.getClaimable(assets);
+    uint256[] memory amounts = aaveParaswapCollector.batchGetClaimable(assets);
     assertEq(amounts[0], 0);
   }
 }

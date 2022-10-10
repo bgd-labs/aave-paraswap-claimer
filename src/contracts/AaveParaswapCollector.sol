@@ -18,9 +18,18 @@ contract AaveParaswapCollector {
   }
 
   /**
-   * @dev returns claimable balances for specified assets
+   * @dev returns claimable balance for a specified asset
+   * @param asset The asset to fetch claimable balance of
    */
-  function getClaimable(address[] memory assets)
+  function getClaimable(address asset) public view returns (uint256) {
+    return paraswapFeeClaimer.getBalance(IERC20(asset), address(this));
+  }
+
+  /**
+   * @dev returns claimable balances for specified assets
+   * @param assets The assets to fetch claimable balances of
+   */
+  function batchGetClaimable(address[] memory assets)
     public
     view
     returns (uint256[] memory)
@@ -31,6 +40,7 @@ contract AaveParaswapCollector {
   /**
    * @dev withdraws a single asset to the collector
    * @notice will revert when there's nothing to claim
+   * @param asset The asset to claim rewards of
    */
   function claimToCollector(IERC20 asset) external {
     paraswapFeeClaimer.withdrawAllERC20(asset, collector);
@@ -39,6 +49,7 @@ contract AaveParaswapCollector {
   /**
    * @dev withdraws all asset to the collector
    * @notice will revert when there's nothing to claim on a single supplied asset
+   * @param assets The assets to claim rewards of
    */
   function batchClaimToCollector(address[] memory assets) external {
     paraswapFeeClaimer.batchWithdrawAllERC20(assets, collector);

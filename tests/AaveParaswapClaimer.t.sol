@@ -8,6 +8,9 @@ import {ParaswapClaimer} from '../src/lib/ParaswapClaimer.sol';
 import {IFeeClaimer} from '../src/interfaces/IFeeClaimer.sol';
 import {IERC20} from '../src/interfaces/IERC20.sol';
 
+/**
+ * This tests test the basic fee claiming flow.
+ */
 contract AaveParaswapClaimerTest is Test {
   AaveParaswapFeeClaimer public aaveParaswapClaimer;
 
@@ -25,7 +28,9 @@ contract AaveParaswapClaimerTest is Test {
       ParaswapClaimer.POLYGON
     );
 
-    // mock received fee for
+    /**
+     * As there are no claimable fees for the newly deployed claimer, we're adding some USDC.
+     */
     vm.startPrank(AUGUSTUS);
     deal(USDC, address(aaveParaswapClaimer.PARASWAP_FEE_CLAIMER()), 2 ether);
     IFeeClaimer(aaveParaswapClaimer.PARASWAP_FEE_CLAIMER()).registerFee(

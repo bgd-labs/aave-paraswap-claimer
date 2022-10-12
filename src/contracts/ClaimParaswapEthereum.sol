@@ -10,7 +10,7 @@ contract ClaimParaswapEthereum is IProposalGenericExecutor {
   function execute() external override {
     address[] memory tokens = AaveV2Ethereum.POOL.getReservesList();
     uint256[] memory balances = IFeeClaimer(ParaswapClaimer.ETHEREUM)
-      .batchGetBalance(tokens, msg.sender);
+      .batchGetBalance(tokens, 0xEE56e2B3D491590B5b31738cC34d5232F378a8D5);
     uint256 count = 0;
     for (uint256 i; i < balances.length; i++) {
       if (balances[i] != 0) count += 1;

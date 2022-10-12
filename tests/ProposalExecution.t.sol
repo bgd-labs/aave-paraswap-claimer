@@ -5,6 +5,7 @@ import 'forge-std/Test.sol';
 import {GovHelpers} from 'aave-helpers/GovHelpers.sol';
 import {BridgeExecutorHelpers} from 'aave-helpers/BridgeExecutorHelpers.sol';
 import {AaveGovernanceV2, IExecutorWithTimelock} from 'aave-address-book/AaveGovernanceV2.sol';
+import {AaveV2Ethereum} from 'aave-address-book/AaveV2Ethereum.sol';
 import {AaveV3Polygon} from 'aave-address-book/AaveV3Polygon.sol';
 import {IStateReceiver} from 'governance-crosschain-bridges/contracts/dependencies/polygon/fxportal/FxChild.sol';
 import {ClaimParaswapPolygon} from '../src/contracts/ClaimParaswapPolygon.sol';
@@ -35,8 +36,10 @@ contract ProposalExecutionTest is Test {
     0xdc9A35B16DB4e126cFeDC41322b3a36454B1F772;
 
   // erc20 to check
-  address constant WETH_ETHEREUM = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-  address constant WETH_POLYGON = 0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619;
+  IERC20 constant WETH_ETHEREUM =
+    IERC20(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
+  IERC20 constant WETH_POLYGON =
+    IERC20(0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619);
 
   // deploy proposals
   function setUp() public {
@@ -50,6 +53,12 @@ contract ProposalExecutionTest is Test {
    * @dev executes proposal on polygon and mainnet
    */
   function test_proposalE2E() public {
+    // 1. store balances before
+    vm.selectFork(mainnetFork);
+    uint256 wethEthBefore = WETH_ETHEREUM.balanceOf(AaveV2Ethereum.COLLECTOR);
+    vm.selectFork(polygonFork);
+    uint256 wethPolyBefore = WETH_POLYGON.balanceOf(AaveV3Polygon.COLLECTOR);
+
     // 2. create l1 proposal
     vm.selectFork(mainnetFork);
     vm.startPrank(GovHelpers.AAVE_WHALE);
@@ -65,25 +74,41 @@ contract ProposalExecutionTest is Test {
     GovHelpers.passVoteAndExecute(vm, proposalId);
 
     Vm.Log[] memory entries = vm.getRecordedLogs();
+    uint256 index = 0;
+    for (uint256 i = 0; i < entries.length; i++) {
+      if (
+        keccak256('StateSynced(uint256,address,bytes)') == entries[i].topics[0]
+      ) {
+        index = i;
+      }
+    }
+    require(index != 0, 'EVENT_NOT_FOUND');
     assertEq(
       keccak256('StateSynced(uint256,address,bytes)'),
-      entries[4].topics[0]
+      entries[index].topics[0]
     );
-    assertEq(address(uint160(uint256(entries[4].topics[2]))), FX_CHILD_ADDRESS);
+    assertEq(
+      address(uint160(uint256(entries[index].topics[2]))),
+      FX_CHILD_ADDRESS
+    );
 
     // 4. mock the receive on l2 with the data emitted on StateSynced
     vm.selectFork(polygonFork);
     vm.startPrank(BRIDGE_ADMIN);
     IStateReceiver(FX_CHILD_ADDRESS).onStateReceive(
-      uint256(entries[4].topics[1]),
-      this._cutBytes(entries[4].data)
+      uint256(entries[index].topics[1]),
+      this._cutBytes(entries[index].data)
     );
     vm.stopPrank();
 
     // 5. execute proposal on l2
     BridgeExecutorHelpers.waitAndExecuteLatest(vm, POLYGON_BRIDGE_EXECUTOR);
 
-    // make some assumptions about treasury
+    // 6. make some assumptions about treasury
+    vm.selectFork(mainnetFork);
+    assertGt(WETH_ETHEREUM.balanceOf(AaveV2Ethereum.COLLECTOR), wethEthBefore);
+    vm.selectFork(polygonFork);
+    assertGt(WETH_POLYGON.balanceOf(AaveV3Polygon.COLLECTOR), wethPolyBefore);
   }
 
   // utility to transform memory to calldata so array range access is available

@@ -7,10 +7,13 @@ import {IFeeClaimer} from '../interfaces/IFeeClaimer.sol';
 import {ParaswapClaimer} from '../lib/ParaswapClaimer.sol';
 
 contract ClaimParaswapPolygon is IProposalGenericExecutor {
+  address public constant POLYGON_BRIDGE_EXECUTOR =
+    0xdc9A35B16DB4e126cFeDC41322b3a36454B1F772;
+
   function execute() external override {
     address[] memory tokens = AaveV3Polygon.POOL.getReservesList();
     uint256[] memory balances = IFeeClaimer(ParaswapClaimer.POLYGON)
-      .batchGetBalance(tokens, msg.sender);
+      .batchGetBalance(tokens, POLYGON_BRIDGE_EXECUTOR);
     uint256 count = 0;
     for (uint256 i; i < balances.length; i++) {
       if (balances[i] != 0) count += 1;

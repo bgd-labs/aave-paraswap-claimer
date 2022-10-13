@@ -8,8 +8,8 @@ import {AaveGovernanceV2, IExecutorWithTimelock} from 'aave-address-book/AaveGov
 import {AaveV2Ethereum} from 'aave-address-book/AaveV2Ethereum.sol';
 import {AaveV3Polygon} from 'aave-address-book/AaveV3Polygon.sol';
 import {IStateReceiver} from 'governance-crosschain-bridges/contracts/dependencies/polygon/fxportal/FxChild.sol';
-import {ClaimParaswapPolygon} from '../src/contracts/ClaimParaswapPolygon.sol';
-import {ClaimParaswapEthereum} from '../src/contracts/ClaimParaswapEthereum.sol';
+import {PolygonClaimPayload} from '../src/contracts/PolygonClaimPayload.sol';
+import {EthereumClaimPayload} from '../src/contracts/EthereumClaimPayload.sol';
 import {ParaswapClaimer} from '../src/lib/ParaswapClaimer.sol';
 import {IFeeClaimer} from '../src/interfaces/IFeeClaimer.sol';
 import {IERC20} from '../src/interfaces/IERC20.sol';
@@ -24,8 +24,8 @@ contract ProposalExecutionTest is Test {
   uint256 polygonFork;
 
   // the two proposals (rest can be done by guardian)
-  ClaimParaswapEthereum public mainnetProposal;
-  ClaimParaswapPolygon public polygonProposal;
+  EthereumClaimPayload public mainnetProposal;
+  PolygonClaimPayload public polygonProposal;
 
   // addresses required to mock l2 execution
   address public constant BRIDGE_ADMIN =
@@ -44,9 +44,9 @@ contract ProposalExecutionTest is Test {
   // deploy proposals
   function setUp() public {
     mainnetFork = vm.createSelectFork(vm.rpcUrl('ethereum'), 15732799);
-    mainnetProposal = new ClaimParaswapEthereum();
+    mainnetProposal = new EthereumClaimPayload();
     polygonFork = vm.createSelectFork(vm.rpcUrl('polygon'), 34255398);
-    polygonProposal = new ClaimParaswapPolygon();
+    polygonProposal = new PolygonClaimPayload();
   }
 
   /**

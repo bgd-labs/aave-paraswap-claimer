@@ -8,6 +8,11 @@ import {IFeeClaimer} from '../interfaces/IFeeClaimer.sol';
 import {ParaswapClaimer} from '../lib/ParaswapClaimer.sol';
 import {ParaswapClaim} from './ParaswapClaim.sol';
 
+/**
+ * @title EthereumClaimPayload
+ * @author BGD Labs
+ * @notice Aave governance payload to claim rewards accrued as positive slippage on paraswap to the ethereum collector.
+ */
 contract EthereumClaimPayload is IProposalGenericExecutor, ParaswapClaim {
   function execute() external override {
     address[] memory tokens = AaveV2Ethereum.POOL.getReservesList();

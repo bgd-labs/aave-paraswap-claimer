@@ -7,6 +7,11 @@ import {IFeeClaimer} from '../interfaces/IFeeClaimer.sol';
 import {ParaswapClaimer} from '../lib/ParaswapClaimer.sol';
 import {ParaswapClaim} from './ParaswapClaim.sol';
 
+/**
+ * @title PolygonClaimPayload
+ * @author BGD Labs
+ * @notice Aave governance payload to claim rewards accrued as positive slippage on paraswap to the polygon collector.
+ */
 contract PolygonClaimPayload is IProposalGenericExecutor, ParaswapClaim {
   address public constant POLYGON_BRIDGE_EXECUTOR =
     0xdc9A35B16DB4e126cFeDC41322b3a36454B1F772;

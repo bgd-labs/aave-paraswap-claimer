@@ -19,3 +19,12 @@ The `AaveParaswapFeeClaimer` is the beneficiary of these accrued rewards & expos
 `claimToCollector(address asset)`: claim all rewards of a certain asset to the collector
 
 `batchClaimToCollector(address[] assets)`: claim multiple rewards for multiple assets at once. All assets have non zero amounts to claim as otherwise the transactions will revert.
+
+The Fee claimer Contract is deployed via create2 so the address is consistent accross all networks as `0x0`
+
+- [ethereum](etherscan)
+- [polygon](polygonscan)
+
+## Proposal payload
+
+While the new feeds will accrue to the new permission-less `AaveParaswapFeeClaimer` there are already ~50k$ in fees accrued that must be claimed trough governance. The payload in this repository claims all the accrued fees to the Aave collectors on the respective networks.

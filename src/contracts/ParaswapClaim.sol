@@ -22,7 +22,7 @@ contract ParaswapClaim {
     address[] memory tokens
   ) internal {
     // paraswap errors when one of the balances is 0 so we need to filter them beforehand
-    uint256[] memory balances = IFeeClaimer(feeClaimer).batchGetBalance(
+    uint256[] memory balances = feeClaimer.batchGetBalance(
       tokens,
       aaveClaimer
     );
@@ -39,6 +39,6 @@ contract ParaswapClaim {
       }
     }
     require(currentIndex == count, 'NON_MATCHING_LENGTH');
-    IFeeClaimer(feeClaimer).batchWithdrawAllERC20(claimableTokens, receiver);
+    feeClaimer.batchWithdrawAllERC20(claimableTokens, receiver);
   }
 }

@@ -53,7 +53,7 @@ library DeployL1Proposal {
   }
 }
 
-contract DeployMai is Script {
+contract DeployProposal is Script {
   function run() external {
     vm.startBroadcast();
     DeployL1Proposal._deployL1Proposal(address(0), address(0), bytes32(0));

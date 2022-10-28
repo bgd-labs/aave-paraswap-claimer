@@ -6,10 +6,15 @@ import {AaveV2Ethereum, AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Ar
 import {AaveParaswapFeeClaimer} from '../src/contracts/AaveParaswapFeeClaimer.sol';
 import {ParaswapClaimer} from '../src/lib/ParaswapClaimer.sol';
 
+library Create2Salt {
+  bytes32 constant salt =
+    bytes32(0x6bcddbff4728acf0fce52a07a92f80d4dae551bd2ed6fe8b725c3eeca87e51be);
+}
+
 contract DeployEthereum is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapFeeClaimer(
+    new AaveParaswapFeeClaimer{salt: Create2Salt.salt}(
       AaveV2Ethereum.COLLECTOR,
       ParaswapClaimer.ETHEREUM
     );
@@ -20,7 +25,7 @@ contract DeployEthereum is Script {
 contract DeployPolygon is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapFeeClaimer(
+    new AaveParaswapFeeClaimer{salt: Create2Salt.salt}(
       AaveV3Polygon.COLLECTOR,
       ParaswapClaimer.POLYGON
     );
@@ -31,7 +36,7 @@ contract DeployPolygon is Script {
 contract DeployAvalanche is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapFeeClaimer(
+    new AaveParaswapFeeClaimer{salt: Create2Salt.salt}(
       AaveV3Avalanche.COLLECTOR,
       ParaswapClaimer.AVALANCHE
     );
@@ -42,7 +47,7 @@ contract DeployAvalanche is Script {
 contract DeployOptimism is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapFeeClaimer(
+    new AaveParaswapFeeClaimer{salt: Create2Salt.salt}(
       AaveV3Optimism.COLLECTOR,
       ParaswapClaimer.OPTIMISM
     );
@@ -53,7 +58,7 @@ contract DeployOptimism is Script {
 contract DeployArbitrum is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapFeeClaimer(
+    new AaveParaswapFeeClaimer{salt: Create2Salt.salt}(
       AaveV3Arbitrum.COLLECTOR,
       ParaswapClaimer.ARBITRUM
     );
@@ -64,7 +69,10 @@ contract DeployArbitrum is Script {
 contract DeployFantom is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapFeeClaimer(AaveV3Fantom.COLLECTOR, ParaswapClaimer.FANTOM);
+    new AaveParaswapFeeClaimer{salt: Create2Salt.salt}(
+      AaveV3Fantom.COLLECTOR,
+      ParaswapClaimer.FANTOM
+    );
     vm.stopBroadcast();
   }
 }

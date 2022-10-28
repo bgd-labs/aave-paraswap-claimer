@@ -14,9 +14,9 @@ contract AaveParaswapFeeClaimer {
   address public immutable COLLECTOR;
   IFeeClaimer public immutable PARASWAP_FEE_CLAIMER;
 
-  constructor(address _collector, address _paraswapFeeClaimer) {
+  constructor(address _collector, IFeeClaimer _paraswapFeeClaimer) {
     COLLECTOR = _collector;
-    PARASWAP_FEE_CLAIMER = IFeeClaimer(_paraswapFeeClaimer);
+    PARASWAP_FEE_CLAIMER = _paraswapFeeClaimer;
   }
 
   /**

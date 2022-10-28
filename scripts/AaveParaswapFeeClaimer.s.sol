@@ -7,8 +7,7 @@ import {AaveParaswapFeeClaimer} from '../src/contracts/AaveParaswapFeeClaimer.so
 import {ParaswapClaimer} from '../src/lib/ParaswapClaimer.sol';
 
 library Create2Salt {
-  bytes32 constant salt =
-    bytes32(0x6bcddbff4728acf0fce52a07a92f80d4dae551bd2ed6fe8b725c3eeca87e51be);
+  bytes32 constant salt = keccak256(bytes('aave.paraswapclaimer.v1'));
 }
 
 contract DeployEthereum is Script {

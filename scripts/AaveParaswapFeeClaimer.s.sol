@@ -13,10 +13,10 @@ library Create2Salt {
 contract DeployEthereum is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapFeeClaimer{salt: Create2Salt.salt}(
-      AaveV2Ethereum.COLLECTOR,
-      ParaswapClaimer.ETHEREUM
-    );
+    AaveParaswapFeeClaimer claimer = new AaveParaswapFeeClaimer{
+      salt: Create2Salt.salt
+    }();
+    claimer.initialize(AaveV2Ethereum.COLLECTOR, ParaswapClaimer.ETHEREUM);
     vm.stopBroadcast();
   }
 }
@@ -24,10 +24,10 @@ contract DeployEthereum is Script {
 contract DeployPolygon is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapFeeClaimer{salt: Create2Salt.salt}(
-      AaveV3Polygon.COLLECTOR,
-      ParaswapClaimer.POLYGON
-    );
+    AaveParaswapFeeClaimer claimer = new AaveParaswapFeeClaimer{
+      salt: Create2Salt.salt
+    }();
+    claimer.initialize(AaveV3Polygon.COLLECTOR, ParaswapClaimer.POLYGON);
     vm.stopBroadcast();
   }
 }
@@ -35,10 +35,10 @@ contract DeployPolygon is Script {
 contract DeployAvalanche is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapFeeClaimer{salt: Create2Salt.salt}(
-      AaveV3Avalanche.COLLECTOR,
-      ParaswapClaimer.AVALANCHE
-    );
+    AaveParaswapFeeClaimer claimer = new AaveParaswapFeeClaimer{
+      salt: Create2Salt.salt
+    }();
+    claimer.initialize(AaveV3Avalanche.COLLECTOR, ParaswapClaimer.AVALANCHE);
     vm.stopBroadcast();
   }
 }
@@ -46,10 +46,10 @@ contract DeployAvalanche is Script {
 contract DeployOptimism is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapFeeClaimer{salt: Create2Salt.salt}(
-      AaveV3Optimism.COLLECTOR,
-      ParaswapClaimer.OPTIMISM
-    );
+    AaveParaswapFeeClaimer claimer = new AaveParaswapFeeClaimer{
+      salt: Create2Salt.salt
+    }();
+    claimer.initialize(AaveV3Optimism.COLLECTOR, ParaswapClaimer.OPTIMISM);
     vm.stopBroadcast();
   }
 }
@@ -57,10 +57,10 @@ contract DeployOptimism is Script {
 contract DeployArbitrum is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapFeeClaimer{salt: Create2Salt.salt}(
-      AaveV3Arbitrum.COLLECTOR,
-      ParaswapClaimer.ARBITRUM
-    );
+    AaveParaswapFeeClaimer claimer = new AaveParaswapFeeClaimer{
+      salt: Create2Salt.salt
+    }();
+    claimer.initialize(AaveV3Arbitrum.COLLECTOR, ParaswapClaimer.ARBITRUM);
     vm.stopBroadcast();
   }
 }
@@ -68,10 +68,10 @@ contract DeployArbitrum is Script {
 contract DeployFantom is Script {
   function run() external {
     vm.startBroadcast();
-    new AaveParaswapFeeClaimer{salt: Create2Salt.salt}(
-      AaveV3Fantom.COLLECTOR,
-      ParaswapClaimer.FANTOM
-    );
+    AaveParaswapFeeClaimer claimer = new AaveParaswapFeeClaimer{
+      salt: Create2Salt.salt
+    }();
+    claimer.initialize(AaveV3Fantom.COLLECTOR, ParaswapClaimer.FANTOM);
     vm.stopBroadcast();
   }
 }

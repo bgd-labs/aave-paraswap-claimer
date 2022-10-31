@@ -23,7 +23,8 @@ contract AaveParaswapClaimerTest is Test {
 
   function setUp() public {
     vm.createSelectFork(vm.rpcUrl('polygon'), 31507646);
-    aaveParaswapClaimer = new AaveParaswapFeeClaimer(
+    aaveParaswapClaimer = new AaveParaswapFeeClaimer();
+    aaveParaswapClaimer.initialize(
       AaveV3Polygon.COLLECTOR,
       ParaswapClaimer.POLYGON
     );
@@ -32,13 +33,21 @@ contract AaveParaswapClaimerTest is Test {
      * As there are no claimable fees for the newly deployed claimer, we're adding some USDC.
      */
     vm.startPrank(AUGUSTUS);
-    deal(USDC, address(aaveParaswapClaimer.PARASWAP_FEE_CLAIMER()), 2 ether);
-    IFeeClaimer(aaveParaswapClaimer.PARASWAP_FEE_CLAIMER()).registerFee(
+    deal(USDC, address(aaveParaswapClaimer.paraswapFeeClaimer()), 2 ether);
+    IFeeClaimer(aaveParaswapClaimer.paraswapFeeClaimer()).registerFee(
       address(aaveParaswapClaimer),
       IERC20(USDC),
       1 ether
     );
     vm.stopPrank();
+  }
+
+  function test_getters() public {
+    assertEq(
+      address(aaveParaswapClaimer.paraswapFeeClaimer()),
+      address(ParaswapClaimer.POLYGON)
+    );
+    assertEq(aaveParaswapClaimer.aaveCollector(), AaveV3Polygon.COLLECTOR);
   }
 
   function test_getClaimable() public {

@@ -10,6 +10,7 @@ import {AaveV3Polygon} from 'aave-address-book/AaveV3Polygon.sol';
 import {IStateReceiver} from 'governance-crosschain-bridges/contracts/dependencies/polygon/fxportal/FxChild.sol';
 import {PolygonClaimPayload} from '../src/contracts/PolygonClaimPayload.sol';
 import {EthereumClaimPayload} from '../src/contracts/EthereumClaimPayload.sol';
+import {OptimismClaimPayload} from '../src/contracts/OptimismClaimPayload.sol';
 import {ParaswapClaimer} from '../src/lib/ParaswapClaimer.sol';
 import {IFeeClaimer} from '../src/interfaces/IFeeClaimer.sol';
 import {IERC20} from '../src/interfaces/IERC20.sol';
@@ -22,10 +23,12 @@ contract ProposalExecutionTest is Test {
   // the identifiers of the forks
   uint256 mainnetFork;
   uint256 polygonFork;
+  uint256 optimismFork;
 
   // the two proposals (rest can be done by guardian)
   EthereumClaimPayload public mainnetProposal;
   PolygonClaimPayload public polygonProposal;
+  OptimismClaimPayload public optimismProposal;
 
   // addresses required to mock l2 execution
   address public constant BRIDGE_ADMIN =
@@ -34,6 +37,12 @@ contract ProposalExecutionTest is Test {
     0x8397259c983751DAf40400790063935a11afa28a;
   address public constant POLYGON_BRIDGE_EXECUTOR =
     0xdc9A35B16DB4e126cFeDC41322b3a36454B1F772;
+
+  address internal constant CROSSCHAIN_FORWARDER_POLYGON =
+    address(0x158a6bC04F0828318821baE797f50B0A1299d45b);
+
+  address internal constant CROSSCHAIN_FORWARDER_OPTIMISM =
+    address(0x5f5C02875a8e9B5A26fbd09040ABCfDeb2AA6711);
 
   // erc20 to check
   IERC20 constant WETH_ETHEREUM =
@@ -47,6 +56,8 @@ contract ProposalExecutionTest is Test {
     mainnetProposal = new EthereumClaimPayload();
     polygonFork = vm.createSelectFork(vm.rpcUrl('polygon'), 34255398);
     polygonProposal = new PolygonClaimPayload();
+    optimismFork = vm.createSelectFork(vm.rpcUrl('optimism'), 37108390);
+    optimismProposal = new OptimismClaimPayload();
   }
 
   /**
@@ -62,9 +73,29 @@ contract ProposalExecutionTest is Test {
     // 2. create l1 proposal
     vm.selectFork(mainnetFork);
     vm.startPrank(GovHelpers.AAVE_WHALE);
+    DeployL1Proposal.Execution[]
+      memory execution = new DeployL1Proposal.Execution[](3);
+
+    DeployL1Proposal.Execution[]
+      memory executions = new DeployL1Proposal.Execution[](3);
+    executions[0] = DeployL1Proposal.Execution({
+      target: address(mainnetProposal),
+      signature: 'execute()',
+      callData: ''
+    });
+    executions[1] = DeployL1Proposal.Execution({
+      target: CROSSCHAIN_FORWARDER_POLYGON,
+      signature: 'execute(address)',
+      callData: abi.encode(polygonProposal)
+    });
+    executions[2] = DeployL1Proposal.Execution({
+      target: CROSSCHAIN_FORWARDER_OPTIMISM,
+      signature: 'execute(address)',
+      callData: abi.encode(optimismProposal)
+    });
+
     uint256 proposalId = DeployL1Proposal._deployL1Proposal(
-      address(mainnetProposal),
-      address(polygonProposal),
+      executions,
       0xf6e50d5a3f824f5ab4ffa15fb79f4fa1871b8bf7af9e9b32c1aaaa9ea633006d
     );
     vm.stopPrank();

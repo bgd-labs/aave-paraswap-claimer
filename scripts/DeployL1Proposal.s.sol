@@ -52,16 +52,11 @@ contract DeployProposal is Script {
 
   address internal constant POLYGON_PAYLOAD = address(0);
 
-  address internal constant CROSSCHAIN_FORWARDER_OPTIMISM =
-    address(0x5f5C02875a8e9B5A26fbd09040ABCfDeb2AA6711);
-
-  address internal constant OPTIMISM_PAYLOAD = address(0);
-
   bytes32 internal constant IPFS_HASH = bytes32(0);
 
   function run() external {
     DeployL1Proposal.Execution[]
-      memory executions = new DeployL1Proposal.Execution[](3);
+      memory executions = new DeployL1Proposal.Execution[](2);
     executions[0] = DeployL1Proposal.Execution({
       target: ETHEREUM_PAYLOAD,
       signature: 'execute()',
@@ -71,11 +66,6 @@ contract DeployProposal is Script {
       target: CROSSCHAIN_FORWARDER_POLYGON,
       signature: 'execute(address)',
       callData: abi.encode(POLYGON_PAYLOAD)
-    });
-    executions[2] = DeployL1Proposal.Execution({
-      target: CROSSCHAIN_FORWARDER_OPTIMISM,
-      signature: 'execute(address)',
-      callData: abi.encode(OPTIMISM_PAYLOAD)
     });
 
     vm.startBroadcast();

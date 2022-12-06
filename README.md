@@ -22,8 +22,12 @@ The `AaveParaswapFeeClaimer` is the beneficiary of these accrued rewards & expos
 
 The Fee claimer Contract is deployed via create2 so the address is consistent accross all networks as `0x0`
 
-- [ethereum](etherscan)
-- [polygon](polygonscan)
+- [Ethereum:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://etherscan.io/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
+- [Polygon:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://polygonscan.com/address/0x9abf798f5314BFd793A9E57A654BEd35af4A1D60#code)
+- [Arbitrum:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://arbiscan.io/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
+- [Optimism:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://optimistic.etherscan.io/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
+- [Avalanche:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://snowtrace.io/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
+- [Fantom:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://ftmscan.com/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
 
 ## Proposal payload
 

@@ -35,6 +35,9 @@ contract ProposalExecutionTest is Test {
   address public constant POLYGON_BRIDGE_EXECUTOR =
     0xdc9A35B16DB4e126cFeDC41322b3a36454B1F772;
 
+  address internal constant CROSSCHAIN_FORWARDER_POLYGON =
+    address(0x158a6bC04F0828318821baE797f50B0A1299d45b);
+
   // erc20 to check
   IERC20 constant WETH_ETHEREUM =
     IERC20(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
@@ -62,9 +65,21 @@ contract ProposalExecutionTest is Test {
     // 2. create l1 proposal
     vm.selectFork(mainnetFork);
     vm.startPrank(GovHelpers.AAVE_WHALE);
+    DeployL1Proposal.Execution[]
+      memory executions = new DeployL1Proposal.Execution[](2);
+    executions[0] = DeployL1Proposal.Execution({
+      target: address(mainnetProposal),
+      signature: 'execute()',
+      callData: ''
+    });
+    executions[1] = DeployL1Proposal.Execution({
+      target: CROSSCHAIN_FORWARDER_POLYGON,
+      signature: 'execute(address)',
+      callData: abi.encode(polygonProposal)
+    });
+
     uint256 proposalId = DeployL1Proposal._deployL1Proposal(
-      address(mainnetProposal),
-      address(polygonProposal),
+      executions,
       0xf6e50d5a3f824f5ab4ffa15fb79f4fa1871b8bf7af9e9b32c1aaaa9ea633006d
     );
     vm.stopPrank();

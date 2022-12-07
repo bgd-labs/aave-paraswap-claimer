@@ -11,12 +11,23 @@ import {IERC20} from '../interfaces/IERC20.sol';
  * @dev Helper contract that allows claiming paraswap partner fee to the collector on the respective network.
  */
 contract AaveParaswapFeeClaimer {
-  address public immutable COLLECTOR;
-  IFeeClaimer public immutable PARASWAP_FEE_CLAIMER;
+  address public aaveCollector;
+  IFeeClaimer public paraswapFeeClaimer;
 
-  constructor(address _collector, IFeeClaimer _paraswapFeeClaimer) {
-    COLLECTOR = _collector;
-    PARASWAP_FEE_CLAIMER = _paraswapFeeClaimer;
+  /**
+   * @dev initializes the collector so that the respective treasury receives the rewards
+   */
+  function initialize(address _aaveCollector, IFeeClaimer _paraswapFeeClaimer)
+    public
+  {
+    require(
+      address(_paraswapFeeClaimer) != address(0),
+      'PARASWAP_FEE_CLAIMER_REQUIRED'
+    );
+    require(_aaveCollector != address(0), 'COLLECTOR_REQUIRED');
+    require(aaveCollector == address(0), 'ALREADY_INITIALIZED');
+    aaveCollector = _aaveCollector;
+    paraswapFeeClaimer = _paraswapFeeClaimer;
   }
 
   /**
@@ -24,7 +35,7 @@ contract AaveParaswapFeeClaimer {
    * @param asset The asset to fetch claimable balance of
    */
   function getClaimable(address asset) public view returns (uint256) {
-    return PARASWAP_FEE_CLAIMER.getBalance(IERC20(asset), address(this));
+    return paraswapFeeClaimer.getBalance(IERC20(asset), address(this));
   }
 
   /**
@@ -36,7 +47,7 @@ contract AaveParaswapFeeClaimer {
     view
     returns (uint256[] memory)
   {
-    return PARASWAP_FEE_CLAIMER.batchGetBalance(assets, address(this));
+    return paraswapFeeClaimer.batchGetBalance(assets, address(this));
   }
 
   /**
@@ -45,7 +56,7 @@ contract AaveParaswapFeeClaimer {
    * @param asset The asset to claim rewards of
    */
   function claimToCollector(IERC20 asset) external {
-    PARASWAP_FEE_CLAIMER.withdrawAllERC20(asset, COLLECTOR);
+    paraswapFeeClaimer.withdrawAllERC20(asset, aaveCollector);
   }
 
   /**
@@ -54,6 +65,6 @@ contract AaveParaswapFeeClaimer {
    * @param assets The assets to claim rewards of
    */
   function batchClaimToCollector(address[] memory assets) external {
-    PARASWAP_FEE_CLAIMER.batchWithdrawAllERC20(assets, COLLECTOR);
+    paraswapFeeClaimer.batchWithdrawAllERC20(assets, aaveCollector);
   }
 }

@@ -20,7 +20,6 @@ The `AaveParaswapFeeClaimer` is the beneficiary of these accrued rewards & expos
 
 `batchClaimToCollector(address[] assets)`: claim multiple rewards for multiple assets at once. All assets have non zero amounts to claim as otherwise the transactions will revert.
 
-The Fee claimer Contract is deployed via create2 so the address is consistent accross all networks as `0x0`
 
 - [Ethereum:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://etherscan.io/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
 - [Polygon:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://polygonscan.com/address/0x9abf798f5314BFd793A9E57A654BEd35af4A1D60#code)
@@ -28,7 +27,7 @@ The Fee claimer Contract is deployed via create2 so the address is consistent ac
 - [Optimism:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://optimistic.etherscan.io/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
 - [Avalanche:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://snowtrace.io/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
 - [Fantom:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://ftmscan.com/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
-- [Base:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://ftmscan.com/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
+- [Base:0xae940e61e9863178b71500c9b5fae2a04da361a1](https://basescan.org/address/0xae940e61e9863178b71500c9b5fae2a04da361a1#code)
 
 ## Proposal payload
 

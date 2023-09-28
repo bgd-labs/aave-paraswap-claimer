@@ -4,8 +4,11 @@ test = 'tests'
 script = 'scripts'
 out = 'out'
 libs = ['lib']
+solc_version = '0.8.19'
+evm_version = 'london'
 remappings = [
 ]
+bytecode_hash = 'none'
 
 [rpc_endpoints]
 ethereum = "${RPC_ETHEREUM}"
@@ -14,6 +17,8 @@ avalanche = "${RPC_AVALANCHE}"
 polygon = "${RPC_POLYGON}"
 arbitrum = "${RPC_ARBITRUM}"
 fantom = "${RPC_FANTOM}"
+base = "${RPC_BASE}"
+sepolia = "${RPC_SEPOLIA}"
 
 [etherscan]
 ethereum={key="${ETHERSCAN_API_KEY_ETHEREUM}",chainId=1}
@@ -22,5 +27,7 @@ avalanche={key="${ETHERSCAN_API_KEY_AVALANCHE}",chainId=43114}
 polygon={key="${ETHERSCAN_API_KEY_POLYGON}",chainId=137}
 arbitrum={key="${ETHERSCAN_API_KEY_ARBITRUM}",chainId=42161}
 fantom={key="${ETHERSCAN_API_KEY_FANTOM}",chainId=250}
+base={key="${ETHERSCAN_API_KEY_BASE}",chainId=8453}
+sepolia={key="${ETHERSCAN_API_KEY_ETHEREUM}",chainId=11155111}
 
 # See more config options https://github.com/gakonst/foundry/tree/master/config

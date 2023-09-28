@@ -17,4 +17,6 @@ library ParaswapClaimer {
   IFeeClaimer public constant ARBITRUM = IFeeClaimer(0xA7465CCD97899edcf11C56D2d26B49125674e45F);
 
   IFeeClaimer public constant OPTIMISM = IFeeClaimer(0xA7465CCD97899edcf11C56D2d26B49125674e45F);
+
+  IFeeClaimer public constant BASE = IFeeClaimer(0x9aaB4B24541af30fD72784ED98D8756ac0eFb3C7);
 }

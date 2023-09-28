@@ -58,9 +58,9 @@ contract ProposalExecutionTest is Test {
   function test_proposalE2E() public {
     // 1. store balances before
     vm.selectFork(mainnetFork);
-    uint256 wethEthBefore = WETH_ETHEREUM.balanceOf(AaveV2Ethereum.COLLECTOR);
+    uint256 wethEthBefore = WETH_ETHEREUM.balanceOf(address(AaveV2Ethereum.COLLECTOR));
     vm.selectFork(polygonFork);
-    uint256 wethPolyBefore = WETH_POLYGON.balanceOf(AaveV3Polygon.COLLECTOR);
+    uint256 wethPolyBefore = WETH_POLYGON.balanceOf(address(AaveV3Polygon.COLLECTOR));
 
     // 2. create l1 proposal
     vm.selectFork(mainnetFork);
@@ -121,9 +121,9 @@ contract ProposalExecutionTest is Test {
 
     // 6. make some assumptions about treasury
     vm.selectFork(mainnetFork);
-    assertGt(WETH_ETHEREUM.balanceOf(AaveV2Ethereum.COLLECTOR), wethEthBefore);
+    assertGt(WETH_ETHEREUM.balanceOf(address(AaveV2Ethereum.COLLECTOR)), wethEthBefore);
     vm.selectFork(polygonFork);
-    assertGt(WETH_POLYGON.balanceOf(AaveV3Polygon.COLLECTOR), wethPolyBefore);
+    assertGt(WETH_POLYGON.balanceOf(address(AaveV3Polygon.COLLECTOR)), wethPolyBefore);
   }
 
   // utility to transform memory to calldata so array range access is available

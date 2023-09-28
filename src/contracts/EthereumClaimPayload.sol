@@ -19,7 +19,7 @@ contract EthereumClaimPayload is IProposalGenericExecutor, ParaswapClaim {
     claim(
       ParaswapClaimer.ETHEREUM,
       AaveGovernanceV2.SHORT_EXECUTOR,
-      AaveV2Ethereum.COLLECTOR,
+      address(AaveV2Ethereum.COLLECTOR),
       tokens
     );
   }

@@ -21,7 +21,7 @@ contract PolygonClaimPayload is IProposalGenericExecutor, ParaswapClaim {
     claim(
       ParaswapClaimer.POLYGON,
       POLYGON_BRIDGE_EXECUTOR,
-      AaveV3Polygon.COLLECTOR,
+      address(AaveV3Polygon.COLLECTOR),
       tokens
     );
   }

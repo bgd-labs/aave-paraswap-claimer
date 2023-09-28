@@ -28,6 +28,7 @@ The Fee claimer Contract is deployed via create2 so the address is consistent ac
 - [Optimism:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://optimistic.etherscan.io/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
 - [Avalanche:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://snowtrace.io/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
 - [Fantom:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://ftmscan.com/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
+- [Base:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://ftmscan.com/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
 
 ## Proposal payload
 

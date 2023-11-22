@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {Script} from 'forge-std/Script.sol';
-import {AaveV2Ethereum, AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Base} from 'aave-address-book/AaveAddressBook.sol';
+import {AaveV2Ethereum, AaveV3Polygon, AaveV3Avalanche, AaveV3Optimism, AaveV3Arbitrum, AaveV3Fantom, AaveV3Base, AaveV3Bnb} from 'aave-address-book/AaveAddressBook.sol';
 import {AaveParaswapFeeClaimer} from '../src/contracts/AaveParaswapFeeClaimer.sol';
 import {ParaswapClaimer} from '../src/lib/ParaswapClaimer.sol';
 
@@ -83,6 +83,20 @@ contract DeployBase is Script {
       salt: Create2Salt.salt
     }();
     claimer.initialize(address(AaveV3Base.COLLECTOR), ParaswapClaimer.BASE);
+    vm.stopBroadcast();
+  }
+}
+
+contract DeployBNB is Script {
+  function run() external {
+    vm.startBroadcast();
+    AaveParaswapFeeClaimer claimer = new AaveParaswapFeeClaimer{
+      salt: Create2Salt.salt
+    }();
+    claimer.initialize(
+      address(AaveV3Bnb.COLLECTOR),
+      ParaswapClaimer.BNB
+    );
     vm.stopBroadcast();
   }
 }

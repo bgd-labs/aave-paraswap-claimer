@@ -28,6 +28,7 @@ The `AaveParaswapFeeClaimer` is the beneficiary of these accrued rewards & expos
 - [Avalanche:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://snowtrace.io/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
 - [Fantom:0x9abf798f5314BFd793A9E57A654BEd35af4A1D60](https://ftmscan.com/address/0x9abf798f5314bfd793a9e57a654bed35af4a1d60#code)
 - [Base:0xae940e61e9863178b71500c9b5fae2a04da361a1](https://basescan.org/address/0xae940e61e9863178b71500c9b5fae2a04da361a1#code)
+- [Bnb:0xae940e61e9863178b71500c9b5fae2a04da361a1](https://bscscan.com/address/0xAe940e61E9863178b71500c9B5faE2a04Da361a1#code)
 
 ## Proposal payload
 

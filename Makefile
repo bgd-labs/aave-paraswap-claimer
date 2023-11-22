@@ -17,4 +17,5 @@ deploy-avalanche :; forge script scripts/AaveParaswapFeeClaimer.s.sol:DeployAval
 deploy-optimism :; forge script scripts/AaveParaswapFeeClaimer.s.sol:DeployOptimism --rpc-url optimism --broadcast --legacy --ledger --mnemonic-indexes ${MNEMONIC_INDEX} --sender ${LEDGER_SENDER} --verify -vvvv
 deploy-arbitrum :; forge script scripts/AaveParaswapFeeClaimer.s.sol:DeployArbitrum --rpc-url arbitrum --broadcast --legacy --ledger --mnemonic-indexes ${MNEMONIC_INDEX} --sender ${LEDGER_SENDER} --verify -vvvv
 deploy-fantom :; forge script scripts/AaveParaswapFeeClaimer.s.sol:DeployFantom --rpc-url fantom --broadcast --legacy --ledger --mnemonic-indexes ${MNEMONIC_INDEX} --sender ${LEDGER_SENDER} --verify -vvvv
-base :; make deploy-ledger contract=scripts/AaveParaswapFeeClaimer.s.sol:DeployBase chain=base
+deploy-base :; make deploy-ledger contract=scripts/AaveParaswapFeeClaimer.s.sol:DeployBase chain=base
+deploy-bnb :;  make deploy-ledger contract=scripts/AaveParaswapFeeClaimer.s.sol:DeployBNB chain=bnb

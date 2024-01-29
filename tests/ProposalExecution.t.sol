@@ -3,10 +3,14 @@ pragma solidity ^0.8.0;
 
 import 'forge-std/Test.sol';
 import {GovHelpers} from 'aave-helpers/GovHelpers.sol';
-import {BridgeExecutorHelpers} from 'aave-helpers/BridgeExecutorHelpers.sol';
+import {CommonTestBase} from 'aave-helpers/CommonTestBase.sol';
 import {AaveGovernanceV2, IExecutorWithTimelock} from 'aave-address-book/AaveGovernanceV2.sol';
 import {AaveV2Ethereum} from 'aave-address-book/AaveV2Ethereum.sol';
+import {AaveV2Avalanche} from 'aave-address-book/AaveV2Avalanche.sol';
 import {AaveV3Polygon} from 'aave-address-book/AaveV3Polygon.sol';
+import {AaveV3Optimism} from 'aave-address-book/AaveV3Optimism.sol';
+import {AaveV3Arbitrum} from 'aave-address-book/AaveV3Arbitrum.sol';
+import {AaveV3Fantom} from 'aave-address-book/AaveV3Fantom.sol';
 import {IStateReceiver} from 'governance-crosschain-bridges/contracts/dependencies/polygon/fxportal/FxChild.sol';
 import {PolygonClaimPayload} from '../src/contracts/PolygonClaimPayload.sol';
 import {EthereumClaimPayload} from '../src/contracts/EthereumClaimPayload.sol';
@@ -14,124 +18,119 @@ import {ParaswapClaimer} from '../src/lib/ParaswapClaimer.sol';
 import {IFeeClaimer} from '../src/interfaces/IFeeClaimer.sol';
 import {IERC20} from '../src/interfaces/IERC20.sol';
 import {DeployL1Proposal} from '../scripts/DeployL1Proposal.s.sol';
+import {IERC20Metadata} from 'solidity-utils/contracts/oz-common/interfaces/IERC20Metadata.sol';
 
-/**
- * This tests test the basic fee claiming flow.
- */
-contract ProposalExecutionTest is Test {
-  // the identifiers of the forks
-  uint256 mainnetFork;
-  uint256 polygonFork;
+abstract contract ProposalTest is CommonTestBase {
+  function _testClaim(
+    address[] memory reserves,
+    IFeeClaimer claimer,
+    address partner
+  ) public {
+    uint256[] memory fees = claimer.batchGetBalance(reserves, partner);
+    string memory symbol;
+    for (uint256 i = 0; i < reserves.length; i++) {
+      if (reserves[i] == 0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2)
+        symbol = 'MKR';
+      else symbol = IERC20Metadata(reserves[i]).symbol();
 
-  // the two proposals (rest can be done by guardian)
-  EthereumClaimPayload public mainnetProposal;
-  PolygonClaimPayload public polygonProposal;
-
-  // addresses required to mock l2 execution
-  address public constant BRIDGE_ADMIN =
-    0x0000000000000000000000000000000000001001;
-  address public constant FX_CHILD_ADDRESS =
-    0x8397259c983751DAf40400790063935a11afa28a;
-  address public constant POLYGON_BRIDGE_EXECUTOR =
-    0xdc9A35B16DB4e126cFeDC41322b3a36454B1F772;
-
-  address internal constant CROSSCHAIN_FORWARDER_POLYGON =
-    address(0x158a6bC04F0828318821baE797f50B0A1299d45b);
-
-  // erc20 to check
-  IERC20 constant WETH_ETHEREUM =
-    IERC20(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
-  IERC20 constant WETH_POLYGON =
-    IERC20(0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619);
-
-  // deploy proposals
-  function setUp() public {
-    mainnetFork = vm.createSelectFork(vm.rpcUrl('ethereum'), 15732799);
-    mainnetProposal = new EthereumClaimPayload();
-    polygonFork = vm.createSelectFork(vm.rpcUrl('polygon'), 34255398);
-    polygonProposal = new PolygonClaimPayload();
-  }
-
-  /**
-   * @dev executes proposal on polygon and mainnet
-   */
-  function test_proposalE2E() public {
-    // 1. store balances before
-    vm.selectFork(mainnetFork);
-    uint256 wethEthBefore = WETH_ETHEREUM.balanceOf(address(AaveV2Ethereum.COLLECTOR));
-    vm.selectFork(polygonFork);
-    uint256 wethPolyBefore = WETH_POLYGON.balanceOf(address(AaveV3Polygon.COLLECTOR));
-
-    // 2. create l1 proposal
-    vm.selectFork(mainnetFork);
-    vm.startPrank(GovHelpers.AAVE_WHALE);
-    DeployL1Proposal.Execution[]
-      memory executions = new DeployL1Proposal.Execution[](2);
-    executions[0] = DeployL1Proposal.Execution({
-      target: address(mainnetProposal),
-      signature: 'execute()',
-      callData: ''
-    });
-    executions[1] = DeployL1Proposal.Execution({
-      target: CROSSCHAIN_FORWARDER_POLYGON,
-      signature: 'execute(address)',
-      callData: abi.encode(polygonProposal)
-    });
-
-    uint256 proposalId = DeployL1Proposal._deployL1Proposal(
-      executions,
-      0xf6e50d5a3f824f5ab4ffa15fb79f4fa1871b8bf7af9e9b32c1aaaa9ea633006d
-    );
-    vm.stopPrank();
-
-    // 3. execute proposal and record logs so we can extract the emitted StateSynced event
-    vm.recordLogs();
-    GovHelpers.passVoteAndExecute(vm, proposalId);
-
-    Vm.Log[] memory entries = vm.getRecordedLogs();
-    uint256 index = 0;
-    for (uint256 i = 0; i < entries.length; i++) {
-      if (
-        keccak256('StateSynced(uint256,address,bytes)') == entries[i].topics[0]
-      ) {
-        index = i;
-      }
+      emit log_named_decimal_uint(
+        symbol,
+        fees[i],
+        IERC20Metadata(reserves[i]).decimals()
+      );
     }
-    require(index != 0, 'EVENT_NOT_FOUND');
-    assertEq(
-      keccak256('StateSynced(uint256,address,bytes)'),
-      entries[index].topics[0]
-    );
-    assertEq(
-      address(uint160(uint256(entries[index].topics[2]))),
-      FX_CHILD_ADDRESS
-    );
+  }
+}
 
-    // 4. mock the receive on l2 with the data emitted on StateSynced
-    vm.selectFork(polygonFork);
-    vm.startPrank(BRIDGE_ADMIN);
-    IStateReceiver(FX_CHILD_ADDRESS).onStateReceive(
-      uint256(entries[index].topics[1]),
-      this._cutBytes(entries[index].data)
-    );
-    vm.stopPrank();
-
-    // 5. execute proposal on l2
-    BridgeExecutorHelpers.waitAndExecuteLatest(vm, POLYGON_BRIDGE_EXECUTOR);
-
-    // 6. make some assumptions about treasury
-    vm.selectFork(mainnetFork);
-    assertGt(WETH_ETHEREUM.balanceOf(address(AaveV2Ethereum.COLLECTOR)), wethEthBefore);
-    vm.selectFork(polygonFork);
-    assertGt(WETH_POLYGON.balanceOf(address(AaveV3Polygon.COLLECTOR)), wethPolyBefore);
+contract MainnetTest is ProposalTest {
+  function setUp() public {
+    vm.createSelectFork(vm.rpcUrl('ethereum'), 19112149);
   }
 
-  // utility to transform memory to calldata so array range access is available
-  function _cutBytes(bytes calldata input)
-    public
-    pure
-    returns (bytes calldata)
-  {
-    return input[64:];
+  function test_claimable() public {
+    _testClaim(
+      AaveV2Ethereum.POOL.getReservesList(),
+      ParaswapClaimer.ETHEREUM,
+      AaveGovernanceV2.SHORT_EXECUTOR
+    );
+  }
+
+  function test_proposalExecution() public {
+    EthereumClaimPayload payload = new EthereumClaimPayload();
+    GovHelpers.executePayload(
+      vm,
+      address(payload),
+      AaveGovernanceV2.SHORT_EXECUTOR
+    );
+  }
+}
+
+contract PolygonTest is ProposalTest {
+  function setUp() public {
+    vm.createSelectFork(vm.rpcUrl('polygon'), 52885122);
+  }
+
+  function test_claimable() public {
+    _testClaim(
+      AaveV3Polygon.POOL.getReservesList(),
+      ParaswapClaimer.POLYGON,
+      AaveGovernanceV2.POLYGON_BRIDGE_EXECUTOR
+    );
+  }
+}
+
+contract OptimismTest is ProposalTest {
+  function setUp() public {
+    vm.createSelectFork(vm.rpcUrl('optimism'), 115467554);
+  }
+
+  function test_claimable() public {
+    _testClaim(
+      AaveV3Optimism.POOL.getReservesList(),
+      ParaswapClaimer.OPTIMISM,
+      0xE50c8C619d05ff98b22Adf991F17602C774F785c
+    );
+  }
+}
+
+contract AvalancheTest is ProposalTest {
+  function setUp() public {
+    vm.createSelectFork(vm.rpcUrl('avalanche'), 40986517);
+  }
+
+  function test_claimable() public {
+    _testClaim(
+      AaveV2Avalanche.POOL.getReservesList(),
+      ParaswapClaimer.AVALANCHE,
+      0xa35b76E4935449E33C56aB24b23fcd3246f13470
+    );
+  }
+}
+
+contract ArbitrumTest is ProposalTest {
+  function setUp() public {
+    vm.createSelectFork(vm.rpcUrl('arbitrum'), 175393743);
+  }
+
+  function test_claimable() public {
+    _testClaim(
+      AaveV3Arbitrum.POOL.getReservesList(),
+      ParaswapClaimer.ARBITRUM,
+      0xbbd9f90699c1FA0D7A65870D241DD1f1217c96Eb
+    );
+  }
+}
+
+contract FantomTest is ProposalTest {
+  function setUp() public {
+    vm.createSelectFork(vm.rpcUrl('fantom'), 74892952);
+  }
+
+  function test_claimable() public {
+    _testClaim(
+      AaveV3Fantom.POOL.getReservesList(),
+      ParaswapClaimer.FANTOM,
+      0x39CB97b105173b56b5a2b4b33AD25d6a50E6c949
+    );
   }
 }
